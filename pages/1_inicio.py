@@ -22,7 +22,7 @@ st.markdown("""
 ###     Visualizá rindes, superficie y toneladas producidas por lote.
 
 ## - **💰 Análisis Económico por Especie**  
-###Calculá márgenes netos considerando precios, fletes y arrendamientos.
+### Calculá márgenes netos considerando precios, fletes y arrendamientos.
 
 
 
