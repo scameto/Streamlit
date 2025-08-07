@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 
@@ -29,5 +30,10 @@ st.set_page_config(
 )
 
 st.title("Bienvenido a SGAgro App 🌱")
-st.markdown("Seleccioná una sección desde el menú lateral.")
+st.markdown("""
+    <meta http-equiv="refresh" content="0; url=/inicio" />
+""", unsafe_allow_html=True)
+
+# Texto fallback por si no redirige
+st.write("Redirigiendo a la página de inicio...")
 
