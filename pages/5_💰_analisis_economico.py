@@ -4,6 +4,8 @@ import plotly.express as px
 from io import BytesIO
 import os
 import json
+import numpy as np
+
 
 st.set_page_config(page_title="Análisis Económico por Especie", layout="wide")
 
@@ -150,7 +152,10 @@ for _, row in df.iterrows():
         "Flete (USD/ha)": flete_ha,
         "Arrendamiento (USD/ha)": p["arrendamiento"],
         "Ingreso Final (USD/ha)": ingreso_final_ha,
-        "Ingreso Final Total (USD)": ingreso_final_total
+        "Ingreso Final Total (USD)": ingreso_final_total,
+
+        "Precio Neto (USD/tn)": p["precio_neto"],
+        "Flete (USD/tn)": p["flete"]
     })
 
 resumen_df = pd.DataFrame(resultados)
@@ -163,6 +168,17 @@ resumen_df["Costo Total (USD/ha)"] = (
     + resumen_df["Flete (USD/ha)"]
 )
 resumen_df["Margen (USD/ha)"] = resumen_df["Ingreso Neto (USD/ha)"] - resumen_df["Costo Total (USD/ha)"]
+
+# NUEVO: rinde de indiferencia
+resumen_df["Costos Fijos (USD/ha)"] = resumen_df["Costo Unitario (USD/ha)"] + resumen_df["Arrendamiento (USD/ha)"]
+resumen_df["Denominador (USD/tn)"] = resumen_df["Precio Neto (USD/tn)"] - resumen_df["Flete (USD/tn)"]
+
+resumen_df["Rinde Indiferencia (tn/ha)"] = np.where(
+    resumen_df["Denominador (USD/tn)"] > 0,
+    resumen_df["Costos Fijos (USD/ha)"] / resumen_df["Denominador (USD/tn)"],
+    np.nan
+)
+resumen_df["Rinde Indiferencia (kg/ha)"] = resumen_df["Rinde Indiferencia (tn/ha)"] * 1000
 
 cultivos_ordenados = resumen_df.sort_values("Ingreso Final Total (USD)", ascending=False)["Cultivo"].tolist()
 
@@ -215,6 +231,25 @@ fig_stack = px.bar(
 fig_stack.update_layout(barmode="stack", xaxis_title="Cultivo", yaxis_title="USD/ha")
 st.plotly_chart(fig_stack, use_container_width=True)
 
+st.subheader("🏁 Rendimiento de Indiferencia (Break-even)")
+cols_mostrar = [
+    "Cultivo", "Especie", "Campo",
+    "Costos Fijos (USD/ha)", "Precio Neto (USD/tn)", "Flete (USD/tn)",
+    "Denominador (USD/tn)", "Rinde Indiferencia (tn/ha)", "Rinde Indiferencia (kg/ha)"
+]
+st.dataframe(resumen_df[cols_mostrar].sort_values("Rinde Indiferencia (tn/ha)"), use_container_width=True)
+
+# Opcional: gráfico de barras con el rinde de indiferencia
+st.subheader("📉 Rinde de Indiferencia (tn/ha) por Cultivo")
+fig_break = px.bar(
+    resumen_df,
+    x="Cultivo",
+    y="Rinde Indiferencia (tn/ha)",
+    color="Especie",
+    text_auto=".2f",
+    category_orders={"Cultivo": cultivos_ordenados}
+)
+st.plotly_chart(fig_break, use_container_width=True)
 
 # Exportar a Excel
 output = BytesIO()

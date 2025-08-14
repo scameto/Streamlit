@@ -1,4 +1,10 @@
 {
+  "Trigo": {
+    "arrendamiento": 78.0,
+    "flete": 17.0,
+    "precio_bruto": 197.0,
+    "precio_neto": 188.0
+  },
   "Ma\u00edz2": {
     "arrendamiento": 282.0,
     "flete": 0.0,
@@ -10,6 +16,18 @@
     "flete": 17.0,
     "precio_bruto": 360.0,
     "precio_neto": 352.0
+  },
+  "Colza": {
+    "arrendamiento": 1.0,
+    "flete": 17.0,
+    "precio_bruto": 478.8,
+    "precio_neto": 465.0
+  },
+  "Carinata": {
+    "arrendamiento": 78.0,
+    "flete": 17.0,
+    "precio_bruto": 529.0,
+    "precio_neto": 523.0
   },
   "Soja2": {
     "arrendamiento": 282.0,
